@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+
+*{
+    font-family: 'Inter', sans-serif;
+}
+
+.wrapper{
+    margin:0 auto;
+    width: 1140px;
+}
+
+@media(max-width: 1199px){
+    .wrapper{
+        width: 960px;
+    }
+}
+
+@media(max-width: 991px){
+    .wrapper{
+        width: 720px;
+    }
+}
+
+@media(max-width: 767px){
+    .wrapper{
+        width: 540px;
+    }
+}
+
+@media(max-width: 575px){
+    .wrapper{
+        width: 100%;
+    }
+}
+
+body{
+    background-color: #F7F7F7;
+}
+
+.films-list{
+    background-color: #fff;
+    min-height: 100vh;
+}

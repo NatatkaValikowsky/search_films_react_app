@@ -1,0 +1,7 @@
+.film-block{
+    margin:16px;
+    background-color: #fff;
+    filter: drop-shadow(0px 4px 12px rgba(0, 0, 0, 0.15));
+
+    display:flex;
+}
