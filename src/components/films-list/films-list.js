@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { Row } from 'antd';
-import Film from '../film';
 import 'antd/dist/antd.css';
+import ApiService from '../../services/api-service';
+import Spinner from '../spinner';
+import Film from '../film';
+import ErrorMessage from '../error-message';
 import './films-list.css';
 
 export default class FilmsList extends Component {
@@ -10,26 +13,46 @@ export default class FilmsList extends Component {
 
 		this.state = {
 			items: [],
+			loaded: false,
+			error: false,
 		};
 	}
 
 	componentDidMount() {
-		fetch(`https://api.themoviedb.org/3/search/movie?api_key=1a312659d57cbdc19acab57a112fc99f&query=return`)
-			.then((result) => result.json())
+		const apiService = new ApiService();
+
+		apiService
+			.getMovies('return')
 			.then((data) => {
 				this.setState({
 					items: data.results,
+					loaded: true,
+				});
+			})
+			.catch((error) => {
+				this.setState({
+					error: true,
+					errorMessage: error.message,
+					loaded: true,
 				});
 			});
 	}
 
 	render() {
-		const { items } = this.state;
+		const { items, loaded, error, errorMessage } = this.state;
 
-		const elements = items.map((el) => {
-			return <Film key={el.id} {...el} />;
-		});
+		const hasData = !(error || !loaded);
 
-		return <Row className="films-list">{elements}</Row>;
+		const elements = hasData ? items.map((el) => <Film key={el.id} {...el} />) : null;
+		const spinner = !loaded ? <Spinner /> : null;
+		const errorBlock = error ? <ErrorMessage message={errorMessage} /> : null;
+
+		return (
+			<Row className="films-list">
+				{errorBlock}
+				{spinner}
+				{elements}
+			</Row>
+		);
 	}
 }
