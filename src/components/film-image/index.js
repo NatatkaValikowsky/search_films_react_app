@@ -1,3 +1,3 @@
-import FilmImage from "./film-image";
+import FilmImage from './film-image';
 
 export default FilmImage;

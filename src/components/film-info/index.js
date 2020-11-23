@@ -1,3 +1,3 @@
-import FilmInfo from "./film-info";
+import FilmInfo from './film-info';
 
 export default FilmInfo;
