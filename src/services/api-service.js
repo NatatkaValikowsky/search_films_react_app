@@ -21,7 +21,7 @@ export default class ApiService {
 		}
 	}
 
-	getMovies(query) {
-		return this.getResource(`${this.apiBase}movie?api_key=${this.apiKey}&query=${query}`);
+	getMovies(query, page) {
+		return this.getResource(`${this.apiBase}movie?api_key=${this.apiKey}&query=${query}&page=${page}`);
 	}
 }
