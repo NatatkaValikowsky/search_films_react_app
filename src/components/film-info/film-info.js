@@ -21,13 +21,21 @@ export default class FilmInfo extends Component {
 		return `${text.slice(0, finishSymbol)} ...`;
 	}
 
+	getDate = (dateString) => {
+		try {
+			return format(new Date(dateString), 'MMMM dd, yyyy');
+		} catch (error) {
+			return 'Дата неизвестна';
+		}
+	};
+
 	render() {
 		const { title, overview, release_date: releaseDate } = this.props;
 
 		return (
 			<div className="film-block__info">
 				<h3 className="film-block__title">{title}</h3>
-				<span className="film-block__date">{format(new Date(releaseDate), 'MMMM dd, yyyy')}</span>
+				<span className="film-block__date">{this.getDate(releaseDate)}</span>
 				<ul className="film-block__list">
 					<li className="film-block__list-item">Action</li>
 					<li className="film-block__list-item">Drama</li>
@@ -38,8 +46,14 @@ export default class FilmInfo extends Component {
 	}
 }
 
+FilmInfo.defaultProps = {
+	release_date: '',
+	title: '',
+	overview: '',
+};
+
 FilmInfo.propTypes = {
-	title: PropTypes.string.isRequired,
-	overview: PropTypes.string.isRequired,
-	release_date: PropTypes.string.isRequired,
+	title: PropTypes.string,
+	overview: PropTypes.string,
+	release_date: PropTypes.string,
 };

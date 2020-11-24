@@ -21,6 +21,10 @@ const Film = (props) => {
 
 export default Film;
 
+Film.defaultProps = {
+	poster_path: '',
+};
+
 Film.propTypes = {
-	poster_path: PropTypes.string.isRequired,
+	poster_path: PropTypes.string,
 };
