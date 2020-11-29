@@ -18,9 +18,9 @@ export default class SearchBlock extends Component {
 	}, 1000);
 
 	onChange = (event) => {
-		this.setState({
-			inputText: event.target.value,
-		});
+		this.setState(() => ({
+			inputText: event.target.value
+		}));
 
 		this.startSearch();
 	};
