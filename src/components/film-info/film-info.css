@@ -1,6 +1,7 @@
 .film-block__info{
-    padding:20px;
+    padding:10px 20px;
     flex-grow: 0;
+    position:relative;
 }
 
 .film-block__title{
@@ -8,6 +9,8 @@
     font-weight: normal;
     font-size: 20px;
     line-height: 28px;
+    width:80%;
+    margin-bottom:3px;
 }
 
 .film-block__date{
@@ -23,6 +26,7 @@
     padding-left:0;
     display: flex;
     margin-top: 10px;
+    flex-wrap: wrap;
 }
 
 .film-block__list-item{
@@ -37,4 +41,34 @@
     border-radius: 2px;
     padding:5px;
     margin-right: 8px;
+    margin-top:3px;
+}
+
+.film-block__rating{
+    width:30px;
+    height:30px;
+    border-radius: 50%;
+    position: absolute;
+    top:10px;
+    right:10px;
+    border: 2px solid #000000;
+    text-align: center;
+    line-height: 2.1;
+    font-size: 12px;
+}
+
+.film-block__rating--bad{
+    border-color: #E90000;
+}
+
+.film-block__rating--normal{
+    border-color: #E97E00;
+}
+
+.film-block__rating--better{
+    border-color: #E9D100;
+}
+
+.film-block__rating--best{
+    border-color: #66E900;
 }

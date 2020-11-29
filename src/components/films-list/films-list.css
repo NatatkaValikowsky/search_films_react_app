@@ -1,3 +1,18 @@
+.tab-panel{
+    background-color: #fff;
+}
+
+.tab-panel .ant-tabs-nav:before{
+    width:117px;
+    left:50%;
+    right:auto;
+    margin-left: -73px;
+}
+
+.ant-tabs-nav-wrap{
+    justify-content: center;
+}
+
 .films-list{
     padding:16px;
     flex-wrap: wrap;
