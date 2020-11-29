@@ -28,14 +28,12 @@ export default class SearchBlock extends Component {
 	render() {
 		const { inputText } = this.state;
 
-		const { query } = this.props;
-
 		return (
 			<Input
 				className="search-block"
 				onChange={this.onChange}
 				placeholder="Type to search..."
-				value={inputText || query}
+				value={inputText}
 			/>
 		);
 	}
@@ -46,6 +44,5 @@ SearchBlock.defaultProps = {
 };
 
 SearchBlock.propTypes = {
-	onStartSearch: PropTypes.func,
-	query: PropTypes.string.isRequired,
+	onStartSearch: PropTypes.func
 };
