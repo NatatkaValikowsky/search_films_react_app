@@ -32,7 +32,7 @@ export default class Film extends Component {
 		const { rating } = this.state;
 
 		return (
-			<Col sm={24} md={12}>
+			<Col md={24} lg={12}>
 				<article className="film-block">
 					<FilmImage imageUrl={posterPath} />
 					<FilmInfo {...filmInfo} onChangeRate={this.onChangeRate} rating={rating} />
