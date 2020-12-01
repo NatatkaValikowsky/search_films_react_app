@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
-import RateBlock from '../rate-block';
-import GenresList from '../genres-list';
+import { Rate } from 'antd';
 import { GenresConsumer } from '../genres-list-context';
 import './film-info.css';
 
@@ -39,6 +38,16 @@ export default class FilmInfo extends Component {
 		return 'film-block__rating--best';
 	};
 
+	getElements = (genreList, genreIds) => {
+		return genreList
+			.filter((el) => genreIds.includes(el.id))
+			.map((el) => (
+				<li key={el.id} className="film-block__list-item">
+					{el.name}
+				</li>
+			));
+	};
+
 	render() {
 		const {
 			title,
@@ -59,11 +68,12 @@ export default class FilmInfo extends Component {
 				<span className="film-block__date">{this.getDate(releaseDate)}</span>
 				<GenresConsumer>
 					{(genreList) => {
-						return <GenresList genreList={genreList} genreIds={genreIds} />;
+						const elements = this.getElements(genreList, genreIds);
+						return <ul className="film-block__list">{elements}</ul>;
 					}}
 				</GenresConsumer>
 				<p>{this.getCutText(overview)}</p>
-				<RateBlock rateValue={rating} onChange={onChangeRate} />
+				<Rate allowHalf count="10" value={rating} disabled={rating} onChange={onChangeRate} />
 			</div>
 		);
 	}

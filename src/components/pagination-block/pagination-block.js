@@ -5,15 +5,16 @@ import 'antd/dist/antd.css';
 import './pagination-block.css';
 
 const PaginationBlock = (props) => {
-	const { pages, onChange, currPage } = props;
+	const { onChange, currPage, count, onPage } = props;
 
 	return (
 		<Pagination
 			className="pagination-block"
-			current={currPage}
-			total={pages}
+			defaultCurrent={currPage}
+			total={count}
 			onChange={onChange}
 			showSizeChanger={false}
+			pageSize={onPage}
 		/>
 	);
 };
@@ -25,7 +26,8 @@ PaginationBlock.defaultProps = {
 };
 
 PaginationBlock.propTypes = {
-	pages: PropTypes.number.isRequired,
 	currPage: PropTypes.number.isRequired,
 	onChange: PropTypes.func,
+	count: PropTypes.number.isRequired,
+	onPage: PropTypes.number.isRequired
 };

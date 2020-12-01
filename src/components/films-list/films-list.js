@@ -40,8 +40,7 @@ export default class FilmsList extends Component {
 					.then((data) => {
 						this.setState({
 							ratedItems: data.results,
-							loaded: true,
-							totalPages: data.total_pages,
+							loaded: true
 						});
 					})
 					.catch((error) => {
@@ -76,7 +75,7 @@ export default class FilmsList extends Component {
 				this.setState({
 					items: data.results,
 					loaded: true,
-					totalPages: data.total_pages,
+					totalResults: data.total_results
 				});
 			})
 			.catch((error) => {
@@ -94,9 +93,14 @@ export default class FilmsList extends Component {
 		}
 
 		const { ratedItems } = this.state;
-		const ratings = ratedItems.reduce((acc, el) => ({ ...acc, [el.id]: el.rating }), {});
+		if(ratedItems){
+			const ratings = ratedItems.reduce((acc, el) => ({ ...acc, [el.id]: el.rating }), {});
+			return items.map((el) => <Film onChangeRate={this.rateFilm} rating={ratings[el.id]} key={el.id} {...el} />);
+		}
 
-		return items.map((el) => <Film onChangeRate={this.rateFilm} rating={ratings[el.id]} key={el.id} {...el} />);
+
+		return null;
+
 	};
 
 	getRatedFilms = (items) => {
@@ -128,8 +132,7 @@ export default class FilmsList extends Component {
 			this.apiService.getRatedMovies().then((data) => {
 				this.setState({
 					ratedItems: data.results,
-					loaded: true,
-					totalPages: data.total_pages,
+					loaded: true
 				});
 			});
 		} else {
@@ -143,7 +146,7 @@ export default class FilmsList extends Component {
 	};
 
 	render() {
-		const { items, ratedItems, loaded, error, errorMessage, totalPages, page, tabNum, query, genreList } = this.state;
+		const { items, ratedItems, loaded, error, errorMessage, page, tabNum, query, genreList, totalResults } = this.state;
 
 		const searchBlock = tabNum === 1 ? <SearchBlock query={query} onStartSearch={this.onStartSearching} /> : null;
 		const hasData = !(error || !loaded) && items;
@@ -151,7 +154,7 @@ export default class FilmsList extends Component {
 		const rateElements = hasData && tabNum === 2 ? this.getRatedFilms(ratedItems) : null;
 		const spinner = !loaded ? <Spinner /> : null;
 		const errorBlock = error ? <ErrorMessage message={errorMessage} /> : null;
-		const pagination = hasData ? <PaginationBlock pages={totalPages} currPage={page} onChange={this.getPage} /> : null;
+		const pagination = hasData && items.length > 0 ? <PaginationBlock onPage={items.length} hideOnSinglePage count={totalResults} currPage={page} onChange={this.getPage} /> : null;
 
 		return (
 			<GenresProvider value={genreList}>
