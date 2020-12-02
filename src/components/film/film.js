@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {Col, Rate, Image} from 'antd';
-import {format} from "date-fns";
+import { Col, Rate, Image } from 'antd';
+import { format } from 'date-fns';
 import 'antd/dist/antd.css';
 import './film.css';
-import {GenresConsumer} from "../genres-list-context";
+import { GenresConsumer } from '../../genres-list-context';
 import defaultImage from './defaultImage.jpg';
 
 export default class Film extends Component {
@@ -70,21 +70,30 @@ export default class Film extends Component {
 	};
 
 	render() {
-		const { poster_path: posterPath, vote_average: voteAverage, overview, title, release_date: releaseDate, genre_ids: genreIds } = this.props;
+		const {
+			poster_path: posterPath,
+			vote_average: voteAverage,
+			overview,
+			title,
+			release_date: releaseDate,
+			genre_ids: genreIds,
+		} = this.props;
 
 		const { rating } = this.state;
 
 		const ratingClasses = `film-block__rating ${this.setRatingClass(voteAverage)}`;
 
 		const url = 'http://image.tmdb.org/t/p/w600_and_h900_bestv2';
-		const image = posterPath ?
+		const image = posterPath ? (
 			<Image className="film-block__image" width={183} src={url + posterPath} />
-			: <Image className="film-block__image" width={183} src={defaultImage} />;
+		) : (
+			<Image className="film-block__image" width={183} src={defaultImage} />
+		);
 
 		return (
 			<Col md={24} lg={12}>
 				<article className="film-block">
-					{ image }
+					{image}
 					<div className="film-block__info">
 						<span className={ratingClasses}>{voteAverage}</span>
 						<h3 className="film-block__title">{title}</h3>

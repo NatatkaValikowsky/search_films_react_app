@@ -19,7 +19,7 @@ export default class SearchBlock extends Component {
 
 	onChange = (event) => {
 		this.setState(() => ({
-			inputText: event.target.value
+			inputText: event.target.value,
 		}));
 
 		this.startSearch();
@@ -29,12 +29,7 @@ export default class SearchBlock extends Component {
 		const { inputText } = this.state;
 
 		return (
-			<Input
-				className="search-block"
-				onChange={this.onChange}
-				placeholder="Type to search..."
-				value={inputText}
-			/>
+			<Input className="search-block" onChange={this.onChange} placeholder="Type to search..." value={inputText} />
 		);
 	}
 }
@@ -44,5 +39,5 @@ SearchBlock.defaultProps = {
 };
 
 SearchBlock.propTypes = {
-	onStartSearch: PropTypes.func
+	onStartSearch: PropTypes.func,
 };
