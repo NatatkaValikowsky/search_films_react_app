@@ -130,6 +130,8 @@ export default class App extends Component {
 					totalResults={totalResults}
 					onStartSearching={this.onStartSearching}
 					getPage={this.getPage}
+					changeTab={this.changeTab}
+					rateFilm={this.rateFilm}
 				/>
 			</div>
 		);

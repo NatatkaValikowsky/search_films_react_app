@@ -19,11 +19,11 @@ export default class FilmsList extends Component {
 			return <NotFound />;
 		}
 
-		const { ratedItems } = this.props;
+		const { ratedItems, rateFilm } = this.props;
 
 		if (ratedItems) {
 			const ratings = ratedItems.reduce((acc, el) => ({ ...acc, [el.id]: el.rating }), {});
-			return items.map((el) => <Film onChangeRate={this.rateFilm} rating={ratings[el.id]} key={el.id} {...el} />);
+			return items.map((el) => <Film onChangeRate={rateFilm} rating={ratings[el.id]} key={el.id} {...el} />);
 		}
 
 		return null;
@@ -51,6 +51,7 @@ export default class FilmsList extends Component {
 			totalResults,
 			onStartSearching,
 			getPage,
+			changeTab,
 		} = this.props;
 
 		const searchBlock = tabNum === 1 ? <SearchBlock query={query} onStartSearch={onStartSearching} /> : null;
@@ -66,7 +67,7 @@ export default class FilmsList extends Component {
 
 		return (
 			<GenresProvider value={genreList}>
-				<Tabs className="tab-panel" defaultActiveKey={tabNum} onChange={this.changeTab}>
+				<Tabs className="tab-panel" defaultActiveKey={tabNum} onChange={changeTab}>
 					<TabPane tab="Search" key="1">
 						<Row className="films-list">
 							{searchBlock}
@@ -98,6 +99,8 @@ FilmsList.defaultProps = {
 	totalResults: 0,
 	onStartSearching: () => {},
 	getPage: () => {},
+	changeTab: () => {},
+	rateFilm: () => {},
 };
 
 FilmsList.propTypes = {
@@ -113,4 +116,6 @@ FilmsList.propTypes = {
 	totalResults: PropTypes.number,
 	onStartSearching: PropTypes.func,
 	getPage: PropTypes.func,
+	changeTab: PropTypes.func,
+	rateFilm: PropTypes.func,
 };
