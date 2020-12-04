@@ -1,12 +1,20 @@
 import React, { Component } from 'react';
+import {Row, Tabs} from "antd";
 import ApiService from '../../services/api-service';
-import FilmsList from '../films-list';
+import FilmsList from '../films-list';import SearchBlock from "../search-block";
+import ErrorMessage from "../error-message";
+import { GenresProvider } from '../../genres-list-context';
 import './app.css';
+import Spinner from "../spinner";
+import PaginationBlock from "../pagination-block";
+import Empty from "../empty";
+
+const { TabPane } = Tabs;
 
 export default class App extends Component {
 	state = {
 		items: null,
-		ratedItems: null,
+		ratedItems: [],
 		genreList:null,
 		loaded: true,
 		error: false,
@@ -104,8 +112,10 @@ export default class App extends Component {
 				});
 			});
 		} else {
-			const { page } = this.state;
-			this.getFilmsItems(page);
+			const { page, query } = this.state;
+			if(query.trim() !== ''){
+				this.getFilmsItems(page);
+			}
 		}
 	};
 
@@ -116,24 +126,40 @@ export default class App extends Component {
 	render() {
 		const { items, ratedItems, loaded, error, errorMessage, page, tabNum, query, genreList, totalResults } = this.state;
 
+		const searchBlock = tabNum === 1 ? <SearchBlock query={query} onStartSearch={this.onStartSearching} /> : null;
+		const errorBlock = error ? <ErrorMessage message={errorMessage} /> : null;
+		const spinner = !loaded ? <Spinner /> : null;
+		const hasData = !(error || !loaded) && items;
+		const pagination =
+			hasData && items.length > 0 ? (
+				<PaginationBlock hideOnSinglePage count={totalResults} currPage={page} onChange={this.getPage} />
+			) : null;
+
+		const elements = hasData ? <FilmsList type={tabNum} items={items} ratedItems={ratedItems} rateFilm={this.rateFilm} /> : null;
+
 		return (
 			<div className="wrapper">
-				<FilmsList
-					items={items}
-					ratedItems={ratedItems}
-					loaded={loaded}
-					error={error}
-					errorMessage={errorMessage}
-					page={page}
-					tabNum={tabNum}
-					query={query}
-					genreList={genreList}
-					totalResults={totalResults}
-					onStartSearching={this.onStartSearching}
-					getPage={this.getPage}
-					changeTab={this.changeTab}
-					rateFilm={this.rateFilm}
-				/>
+				<GenresProvider value={genreList}>
+					<Tabs className="tab-panel" defaultActiveKey={tabNum} onChange={this.changeTab}>
+						<TabPane tab="Search" key="1">
+							<Row className="films-list">
+								{ searchBlock }
+								{ errorBlock }
+								{ spinner }
+								{ elements }
+								{ pagination }
+							</Row>
+						</TabPane>
+						<TabPane tab="Rated" key="2">
+							<Row className="films-list">
+								{ errorBlock }
+								{ ratedItems.length > 0 || spinner || <Empty/> }
+								{ elements }
+							</Row>
+						</TabPane>
+					</Tabs>
+
+				</GenresProvider>
 			</div>
 		);
 	}
