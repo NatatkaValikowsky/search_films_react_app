@@ -10,6 +10,7 @@ import NotFound from '../not-found';
 import PaginationBlock from '../pagination-block';
 import './films-list.css';
 import { GenresProvider } from '../../genres-list-context';
+import Empty from "../empty";
 
 const { TabPane } = Tabs;
 
@@ -31,7 +32,7 @@ export default class FilmsList extends Component {
 
 	getRatedFilms = (items) => {
 		if (items && items.length === 0) {
-			return <NotFound />;
+			return <Empty />;
 		}
 
 		return items.map((el) => <Film key={el.id} {...el} />);

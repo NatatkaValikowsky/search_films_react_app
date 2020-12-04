@@ -7,6 +7,7 @@ export default class App extends Component {
 	state = {
 		items: null,
 		ratedItems: null,
+		genreList:null,
 		loaded: true,
 		error: false,
 		query: '',
