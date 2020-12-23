@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, Rate, Image } from 'antd';
 import { format } from 'date-fns';
-import getCutText from "../../utils";
+import getCutText from '../../utils';
 import 'antd/dist/antd.css';
 import './film.css';
 import { GenresConsumer } from '../../genres-list-context';
@@ -63,7 +63,7 @@ export default class Film extends Component {
 			title,
 			release_date: releaseDate,
 			genre_ids: genreIds,
-			rating: propRating
+			rating: propRating,
 		} = this.props;
 
 		const { rating } = this.state;

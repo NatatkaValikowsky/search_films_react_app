@@ -4,15 +4,17 @@ class ApiService {
 	apiKey = '1a312659d57cbdc19acab57a112fc99f';
 
 	async sendRequest(url, value) {
-		const sendData = value ? {
-			method: 'post',
-			headers: {
-				'Content-Type': 'application/json;charset=utf-8',
-			},
-			body: JSON.stringify({
-				value,
-			}),
-		} : {};
+		const sendData = value
+			? {
+					method: 'post',
+					headers: {
+						'Content-Type': 'application/json;charset=utf-8',
+					},
+					body: JSON.stringify({
+						value,
+					}),
+			  }
+			: {};
 		try {
 			const res = await fetch(url, sendData);
 			return await res.json();

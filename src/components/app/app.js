@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
-import {Row, Tabs, Alert} from "antd";
+import { Row, Tabs, Alert } from 'antd';
 import ApiService from '../../services/api-service';
 import FilmsList from '../films-list';
-import SearchBlock from "../search-block";
-import ErrorMessage from "../error-message";
+import SearchBlock from '../search-block';
+import ErrorMessage from '../error-message';
 import { GenresProvider } from '../../genres-list-context';
 import './app.css';
-import Spinner from "../spinner";
-import PaginationBlock from "../pagination-block";
-import Empty from "../empty";
+import Spinner from '../spinner';
+import PaginationBlock from '../pagination-block';
+import Empty from '../empty';
 
 const { TabPane } = Tabs;
 
@@ -16,13 +16,13 @@ export default class App extends Component {
 	state = {
 		items: null,
 		ratedItems: [],
-		genreList:null,
+		genreList: null,
 		loaded: true,
 		error: false,
 		query: '',
 		page: 1,
 		tabNum: 1,
-		ratedError: false
+		ratedError: false,
 	};
 
 	componentDidMount = () => {
@@ -30,30 +30,27 @@ export default class App extends Component {
 	};
 
 	initApplication = async () => {
+		ApiService.getGenres()
+			.then((data) => {
+				this.setState({
+					genreList: data.genres,
+				});
 
-		ApiService.getGenres().then((data) => {
-			this.setState({
-				genreList: data.genres,
-			});
+				ApiService.getSessionId().then((request) => {
+					if (request) {
+						this.setState({
+							error: false,
+						});
 
-			ApiService.getSessionId().then((request) => {
-				if (request) {
-
-					this.setState({
-						error: false
-					});
-
-					ApiService
-						.getRatedMovies()
-						.then((items) => {
+						ApiService.getRatedMovies().then((items) => {
 							this.setState({
 								ratedItems: items.results,
-								loaded: true
+								loaded: true,
 							});
 						});
-				}
-			});
-		})
+					}
+				});
+			})
 			.catch((error) => {
 				this.setState({
 					error: true,
@@ -64,24 +61,22 @@ export default class App extends Component {
 	};
 
 	onStartSearching = async (queryString) => {
-		if(queryString.trim() === '') return;
+		if (queryString.trim() === '') return;
 
 		this.setState(() => ({
 			query: queryString,
 			loaded: false,
 			page: 1,
-			error: false
+			error: false,
 		}));
 
 		this.getFilmsItems(1);
-
 	};
 
 	getFilmsItems = (page) => {
 		const { query } = this.state;
 
-		ApiService
-			.getMovies(query, page)
+		ApiService.getMovies(query, page)
 			.then((data) => {
 				this.setState({
 					items: data.results,
@@ -116,24 +111,24 @@ export default class App extends Component {
 	rateFilm = (rateValue, filmId) => {
 		ApiService.rateMovie(rateValue, filmId)
 			.then(() => {
-				this.setState(({ratedItems, items}) => ({
+				this.setState(({ ratedItems, items }) => ({
 					ratedItems: [
 						...ratedItems,
 						{
-							...items.filter(el => el.id === filmId)[0],
-							rating: rateValue
-						}
-					]
+							...items.filter((el) => el.id === filmId)[0],
+							rating: rateValue,
+						},
+					],
 				}));
 			})
 			.catch(() => {
 				this.setState({
-					ratedError: true
+					ratedError: true,
 				});
 
 				setTimeout(() => {
 					this.setState({
-						ratedError: false
+						ratedError: false,
 					});
 				}, 3000);
 			});
@@ -142,13 +137,25 @@ export default class App extends Component {
 	popupError = () => {
 		return (
 			<div className="abs-error">
-				<Alert message="Не получилось оценить фильм" type="error" showIcon/>
+				<Alert message="Не получилось оценить фильм" type="error" showIcon />
 			</div>
-		)
+		);
 	};
 
 	render() {
-		const { items, ratedItems, loaded, error, errorMessage, page, tabNum, query, genreList, totalResults, ratedError } = this.state;
+		const {
+			items,
+			ratedItems,
+			loaded,
+			error,
+			errorMessage,
+			page,
+			tabNum,
+			query,
+			genreList,
+			totalResults,
+			ratedError,
+		} = this.state;
 
 		const searchBlock = <SearchBlock query={query} onStartSearch={this.onStartSearching} />;
 		const errorBlock = error ? <ErrorMessage message={errorMessage} /> : null;
@@ -159,7 +166,9 @@ export default class App extends Component {
 				<PaginationBlock hideOnSinglePage count={totalResults} currPage={page} onChange={this.getPage} />
 			) : null;
 
-		const elements = hasData ? <FilmsList type={tabNum} items={items} ratedItems={ratedItems} rateFilm={this.rateFilm} /> : null;
+		const elements = hasData ? (
+			<FilmsList type={tabNum} items={items} ratedItems={ratedItems} rateFilm={this.rateFilm} />
+		) : null;
 
 		return (
 			<div className="wrapper">
@@ -168,22 +177,21 @@ export default class App extends Component {
 						<TabPane tab="Search" key="1">
 							<Row className="films-list">
 								{ratedError && this.popupError()}
-								{ searchBlock }
-								{ errorBlock }
-								{ spinner }
-								{ elements }
-								{ pagination }
+								{searchBlock}
+								{errorBlock}
+								{spinner}
+								{elements}
+								{pagination}
 							</Row>
 						</TabPane>
 						<TabPane tab="Rated" key="2">
 							<Row className="films-list">
-								{ errorBlock }
-								{ ratedItems.length > 0 || spinner || <Empty/> }
-								{ elements }
+								{errorBlock}
+								{ratedItems.length > 0 || spinner || <Empty />}
+								{elements}
 							</Row>
 						</TabPane>
 					</Tabs>
-
 				</GenresProvider>
 			</div>
 		);
