@@ -21,51 +21,79 @@ export default class App extends Component {
 		query: '',
 		page: 1,
 		tabNum: 1,
+		isInit: false
 	};
 
 	apiService = new ApiService();
 
 	componentDidMount = () => {
+		this.initApplication();
+	};
+
+	initApplication = async () => {
+
 		this.apiService.getGenres().then((data) => {
 			this.setState({
 				genreList: data.genres,
 			});
-		});
 
-		this.apiService.getSessionId().then((request) => {
-			if (request) {
-				this.apiService
-					.getRatedMovies()
-					.then((data) => {
-						this.setState({
-							ratedItems: data.results,
-							loaded: true,
-						});
-					})
-					.catch((error) => {
-						this.setState({
-							error: true,
-							errorMessage: error.message,
-							loaded: true,
-						});
+			this.apiService.getSessionId().then((request) => {
+				if (request) {
+
+					this.setState({
+						isInit: true,
+						error: false
 					});
-			}
-		});
+
+					console.log('init');
+
+					this.apiService
+						.getRatedMovies()
+						.then((items) => {
+							this.setState({
+								ratedItems: items.results,
+								loaded: true
+							});
+						});
+				}
+			});
+		})
+			.catch((error) => {
+				this.setState({
+					error: true,
+					errorMessage: error.message,
+					loaded: true,
+				});
+			});
 	};
 
-	onStartSearching = (queryString) => {
-		if (queryString.trim() !== '') {
+	onStartSearching = async (queryString) => {
+		if(queryString.trim() === '') return;
+
+		const { isInit, error } = this.state;
+
+		if (!isInit){
+			await this.initApplication();
+		}
+
+		console.log('error', error);
+
+		if(!error){
+			console.log(222222);
 			this.setState(() => ({
 				query: queryString,
 				loaded: false,
 				page: 1,
+				error: false
 			}));
 
 			this.getFilmsItems(1);
 		}
+
 	};
 
 	getFilmsItems = (page) => {
+		console.log('get films');
 		const { query } = this.state;
 
 		this.apiService
