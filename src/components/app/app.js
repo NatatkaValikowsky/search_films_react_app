@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import {Row, Tabs} from "antd";
+import {Row, Tabs, Alert} from "antd";
 import ApiService from '../../services/api-service';
-import FilmsList from '../films-list';import SearchBlock from "../search-block";
+import FilmsList from '../films-list';
+import SearchBlock from "../search-block";
 import ErrorMessage from "../error-message";
 import { GenresProvider } from '../../genres-list-context';
 import './app.css';
@@ -21,10 +22,8 @@ export default class App extends Component {
 		query: '',
 		page: 1,
 		tabNum: 1,
-		isInit: false
+		ratedError: false
 	};
-
-	apiService = new ApiService();
 
 	componentDidMount = () => {
 		this.initApplication();
@@ -32,22 +31,19 @@ export default class App extends Component {
 
 	initApplication = async () => {
 
-		this.apiService.getGenres().then((data) => {
+		ApiService.getGenres().then((data) => {
 			this.setState({
 				genreList: data.genres,
 			});
 
-			this.apiService.getSessionId().then((request) => {
+			ApiService.getSessionId().then((request) => {
 				if (request) {
 
 					this.setState({
-						isInit: true,
 						error: false
 					});
 
-					console.log('init');
-
-					this.apiService
+					ApiService
 						.getRatedMovies()
 						.then((items) => {
 							this.setState({
@@ -70,33 +66,21 @@ export default class App extends Component {
 	onStartSearching = async (queryString) => {
 		if(queryString.trim() === '') return;
 
-		const { isInit, error } = this.state;
+		this.setState(() => ({
+			query: queryString,
+			loaded: false,
+			page: 1,
+			error: false
+		}));
 
-		if (!isInit){
-			await this.initApplication();
-		}
-
-		console.log('error', error);
-
-		if(!error){
-			console.log(222222);
-			this.setState(() => ({
-				query: queryString,
-				loaded: false,
-				page: 1,
-				error: false
-			}));
-
-			this.getFilmsItems(1);
-		}
+		this.getFilmsItems(1);
 
 	};
 
 	getFilmsItems = (page) => {
-		console.log('get films');
 		const { query } = this.state;
 
-		this.apiService
+		ApiService
 			.getMovies(query, page)
 			.then((data) => {
 				this.setState({
@@ -127,34 +111,46 @@ export default class App extends Component {
 		this.setState({
 			tabNum: parseInt(key, 10),
 		});
-
-		if (parseInt(key, 10) === 2) {
-			this.setState({
-				loaded: false,
-			});
-
-			this.apiService.getRatedMovies().then((data) => {
-				this.setState({
-					ratedItems: data.results,
-					loaded: true,
-				});
-			});
-		} else {
-			const { page, query } = this.state;
-			if(query.trim() !== ''){
-				this.getFilmsItems(page);
-			}
-		}
 	};
 
 	rateFilm = (rateValue, filmId) => {
-		this.apiService.rateMovie(rateValue, filmId).then().catch();
+		ApiService.rateMovie(rateValue, filmId)
+			.then(() => {
+				this.setState(({ratedItems, items}) => ({
+					ratedItems: [
+						...ratedItems,
+						{
+							...items.filter(el => el.id === filmId)[0],
+							rating: rateValue
+						}
+					]
+				}));
+			})
+			.catch(() => {
+				this.setState({
+					ratedError: true
+				});
+
+				setTimeout(() => {
+					this.setState({
+						ratedError: false
+					});
+				}, 3000);
+			});
+	};
+
+	popupError = () => {
+		return (
+			<div className="abs-error">
+				<Alert message="Не получилось оценить фильм" type="error" showIcon/>
+			</div>
+		)
 	};
 
 	render() {
-		const { items, ratedItems, loaded, error, errorMessage, page, tabNum, query, genreList, totalResults } = this.state;
+		const { items, ratedItems, loaded, error, errorMessage, page, tabNum, query, genreList, totalResults, ratedError } = this.state;
 
-		const searchBlock = tabNum === 1 ? <SearchBlock query={query} onStartSearch={this.onStartSearching} /> : null;
+		const searchBlock = <SearchBlock query={query} onStartSearch={this.onStartSearching} />;
 		const errorBlock = error ? <ErrorMessage message={errorMessage} /> : null;
 		const spinner = !loaded ? <Spinner /> : null;
 		const hasData = !(error || !loaded) && items;
@@ -171,6 +167,7 @@ export default class App extends Component {
 					<Tabs className="tab-panel" defaultActiveKey={tabNum} onChange={this.changeTab}>
 						<TabPane tab="Search" key="1">
 							<Row className="films-list">
+								{ratedError && this.popupError()}
 								{ searchBlock }
 								{ errorBlock }
 								{ spinner }

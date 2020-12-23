@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, Rate, Image } from 'antd';
 import { format } from 'date-fns';
+import getCutText from "../../utils";
 import 'antd/dist/antd.css';
 import './film.css';
 import { GenresConsumer } from '../../genres-list-context';
@@ -28,21 +29,6 @@ export default class Film extends Component {
 			rating: value,
 		});
 	};
-
-	getCutText(text) {
-		if (text.length <= this.textLength) return text;
-
-		if (text[this.textLength - 1] === ' ') {
-			return `${text.slice(0, this.textLength - 1)} ...`;
-		}
-
-		let finishSymbol = this.textLength - 1;
-		while (text[finishSymbol] !== ' ') {
-			finishSymbol -= 1;
-		}
-
-		return `${text.slice(0, finishSymbol)} ...`;
-	}
 
 	getDate = (dateString) => {
 		try {
@@ -77,6 +63,7 @@ export default class Film extends Component {
 			title,
 			release_date: releaseDate,
 			genre_ids: genreIds,
+			rating: propRating
 		} = this.props;
 
 		const { rating } = this.state;
@@ -104,8 +91,8 @@ export default class Film extends Component {
 								return <ul className="film-block__list">{elements}</ul>;
 							}}
 						</GenresConsumer>
-						<p>{this.getCutText(overview)}</p>
-						<Rate allowHalf count="10" value={rating} disabled={rating} onChange={this.onChangeRate} />
+						<p>{getCutText(overview, this.textLength)}</p>
+						<Rate allowHalf count="10" value={propRating || rating} disabled={rating} onChange={this.onChangeRate} />
 					</div>
 				</article>
 			</Col>
