@@ -41,3 +41,10 @@ body{
     background-color: #fff;
     min-height: 100vh;
 }
+
+.abs-error{
+    position: fixed;
+    right: 50px;
+    top: 50px;
+    z-index: 100;
+}

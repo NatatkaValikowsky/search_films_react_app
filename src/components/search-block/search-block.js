@@ -18,10 +18,10 @@ export default class SearchBlock extends Component {
 	}, 1000);
 
 	componentDidMount() {
-		const {query} = this.props;
+		const { query } = this.props;
 
 		this.setState({
-			inputText: query
+			inputText: query,
 		});
 	}
 
@@ -44,10 +44,10 @@ export default class SearchBlock extends Component {
 
 SearchBlock.defaultProps = {
 	onStartSearch: () => {},
-	query: ''
+	query: '',
 };
 
 SearchBlock.propTypes = {
 	onStartSearch: PropTypes.func,
-	query: PropTypes.string
+	query: PropTypes.string,
 };
