@@ -1,5 +1,5 @@
 import React from 'react';
-import image from './empty.svg';
+import image from '../../img/empty.svg';
 import './empty.css';
 
 const Empty = () => {

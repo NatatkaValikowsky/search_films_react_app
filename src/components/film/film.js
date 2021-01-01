@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Col, Rate, Image } from 'antd';
 import { format } from 'date-fns';
+import classnames from 'classnames';
 import getCutText from '../../utils';
 import 'antd/dist/antd.css';
 import './film.css';
 import { GenresConsumer } from '../../genres-list-context';
-import defaultImage from './defaultImage.jpg';
+import defaultImage from '../../img/defaultImage.jpg';
 
 export default class Film extends Component {
 	textLength = 75;
@@ -38,13 +39,6 @@ export default class Film extends Component {
 		}
 	};
 
-	setRatingClass = (value) => {
-		if (value < 3) return 'film-block__rating--bad';
-		if (value < 5) return 'film-block__rating--normal';
-		if (value < 7) return 'film-block__rating--better';
-		return 'film-block__rating--best';
-	};
-
 	getElements = (genreList, genreIds) => {
 		return genreList
 			.filter((el) => genreIds.includes(el.id))
@@ -68,7 +62,12 @@ export default class Film extends Component {
 
 		const { rating } = this.state;
 
-		const ratingClasses = `film-block__rating ${this.setRatingClass(voteAverage)}`;
+		const ratingClasses = classnames('film-block__rating', {
+			'film-block__rating--bad': voteAverage >= 0 && voteAverage < 3,
+			'film-block__rating--normal': voteAverage >= 3 && voteAverage < 5,
+			'film-block__rating--better': voteAverage >= 5 && voteAverage < 7,
+			'film-block__rating--best': voteAverage >= 7,
+		});
 
 		const url = 'http://image.tmdb.org/t/p/w600_and_h900_bestv2';
 		const image = posterPath ? (
