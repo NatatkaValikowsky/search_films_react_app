@@ -21,7 +21,7 @@ export default class App extends Component {
 		error: false,
 		query: '',
 		page: 1,
-		tabNum: 1,
+		tabNum: 'search',
 		ratedError: false,
 	};
 
@@ -30,34 +30,30 @@ export default class App extends Component {
 	};
 
 	initApplication = async () => {
-		ApiService.getGenres()
-			.then((data) => {
-				this.setState({
-					genreList: data.genres,
-				});
-
-				ApiService.getSessionId().then((request) => {
-					if (request) {
-						this.setState({
-							error: false,
-						});
-
-						ApiService.getRatedMovies().then((items) => {
-							this.setState({
-								ratedItems: items.results,
-								loaded: true,
-							});
-						});
-					}
-				});
-			})
-			.catch((error) => {
-				this.setState({
-					error: true,
-					errorMessage: error.message,
-					loaded: true,
-				});
+		try {
+			const genreListData = await ApiService.getGenres();
+			this.setState({
+				genreList: genreListData.genres,
 			});
+
+			await ApiService.getSessionId();
+
+			this.setState({
+				error: false,
+			});
+
+			const ratedMoviesData = await ApiService.getRatedMovies();
+			this.setState({
+				ratedItems: ratedMoviesData.results,
+				loaded: true,
+			});
+		} catch (error) {
+			this.setState({
+				error: true,
+				errorMessage: error.message,
+				loaded: true,
+			});
+		}
 	};
 
 	onStartSearching = async (queryString) => {
@@ -104,7 +100,7 @@ export default class App extends Component {
 
 	changeTab = (key) => {
 		this.setState({
-			tabNum: parseInt(key, 10),
+			tabNum: key,
 		});
 	};
 
@@ -174,7 +170,7 @@ export default class App extends Component {
 			<div className="wrapper">
 				<GenresProvider value={genreList}>
 					<Tabs className="tab-panel" defaultActiveKey={tabNum} onChange={this.changeTab}>
-						<TabPane tab="Search" key="1">
+						<TabPane tab="Search" key="search">
 							<Row className="films-list">
 								{ratedError && this.popupError()}
 								{searchBlock}
@@ -184,7 +180,7 @@ export default class App extends Component {
 								{pagination}
 							</Row>
 						</TabPane>
-						<TabPane tab="Rated" key="2">
+						<TabPane tab="Rated" key="rated">
 							<Row className="films-list">
 								{errorBlock}
 								{ratedItems.length > 0 || spinner || <Empty />}

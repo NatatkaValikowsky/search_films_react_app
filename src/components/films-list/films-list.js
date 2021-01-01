@@ -26,7 +26,7 @@ export default class FilmsList extends Component {
 	render() {
 		const { items, ratedItems, type } = this.props;
 
-		return <>{type === 1 ? this.getFilms(items) : this.getRatedFilms(ratedItems)}</>;
+		return <>{type === 'search' ? this.getFilms(items) : this.getRatedFilms(ratedItems)}</>;
 	}
 }
 
@@ -34,12 +34,12 @@ FilmsList.defaultProps = {
 	items: [],
 	ratedItems: [],
 	rateFilm: () => {},
-	type: 1,
+	type: 'search',
 };
 
 FilmsList.propTypes = {
 	items: PropTypes.arrayOf(PropTypes.object),
 	ratedItems: PropTypes.arrayOf(PropTypes.object),
 	rateFilm: PropTypes.func,
-	type: PropTypes.number,
+	type: PropTypes.string,
 };
